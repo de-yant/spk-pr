@@ -1,134 +1,259 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2">
-                        <div class="h-9 w-9 rounded-xl bg-[#fff2f2] dark:bg-[#1D0002] flex items-center justify-center border border-[#19140035] dark:border-[#3E3E3A]">
-                            <span class="text-[#F53003] dark:text-[#F61500] font-semibold text-sm">SPK</span>
-                        </div>
-                        <span class="font-semibold text-gray-800 dark:text-gray-200">SPK-PR</span>
-                    </a>
+<nav x-data="{ open: false, logoutOpen: false }" @open-sidebar.window="open = true" class="relative">
+
+    {{-- Desktop Sidebar --}}
+    <aside
+        class="hidden lg:flex lg:fixed lg:inset-y-0 lg:left-0 lg:w-64 lg:flex-col
+                  bg-white dark:bg-[#161615] border-r border-[#e3e3e0] dark:border-[#3E3E3A]">
+
+        {{-- Brand --}}
+        <div class="h-16 px-6 flex items-center justify-between border-b border-[#e3e3e0] dark:border-[#3E3E3A]">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2">
+                <div
+                    class="h-9 w-9 rounded-xl bg-[#fff2f2] dark:bg-[#1D0002] flex items-center justify-center border border-[#19140035] dark:border-[#3E3E3A]">
+                    <span class="text-[#F53003] dark:text-[#F61500] font-semibold text-sm">SPK</span>
                 </div>
+                <span class="font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">SPK-PR</span>
+            </a>
+        </div>
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
-            </div>
+        {{-- Menu --}}
+        <div class="flex-1 px-4 py-4 space-y-1">
+            <a href="{{ route('dashboard') }}"
+                class="flex items-center gap-3 px-3 py-2 rounded-md text-sm
+                      {{ request()->routeIs('dashboard') ? 'bg-black/5 dark:bg-white/10 text-[#1b1b18] dark:text-[#EDEDEC]' : 'text-[#706f6c] dark:text-[#A1A09A] hover:bg-black/5 dark:hover:bg-white/5' }}">
+                <span>🏠</span><span>Dashboard</span>
+            </a>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4"
-                 x-data="{ theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light' }">
+            {{-- Dropdown: Calon Konsumen --}}
+            <div x-data="{ ccOpen: {{ request()->routeIs('konsumen.*', 'followup.*', 'survei.*', 'prediksi.*') ? 'true' : 'false' }} }" class="space-y-1">
+                <button type="button" @click="ccOpen = !ccOpen"
+                    class="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-md text-sm
+               text-[#706f6c] dark:text-[#A1A09A]
+               hover:bg-black/5 dark:hover:bg-white/5 transition">
+                    <span class="flex items-center gap-3">
+                        <span>👥</span>
+                        <span>Calon Konsumen</span>
+                    </span>
 
-                <button type="button" aria-label="Toggle dark mode"
-                    class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                    @click="
-                        if (theme === 'dark') {
-                            document.documentElement.classList.remove('dark');
-                            localStorage.setItem('theme', 'light');
-                            theme = 'light';
-                        } else {
-                            document.documentElement.classList.add('dark');
-                            localStorage.setItem('theme', 'dark');
-                            theme = 'dark';
-                        }
-                    "
-                >
-                    <span x-show="theme === 'light'">🌙</span>
-                    <span x-show="theme === 'dark'">☀</span>
-                </button>
-
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <x-dropdown-link :href="route('logout')"
-                                onclick="event.preventDefault(); this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = !open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none transition">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex"
-                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden"
-                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M6 18L18 6M6 6l12 12" />
+                    <svg class="h-4 w-4 transition-transform" :class="ccOpen ? 'rotate-180' : ''" viewBox="0 0 20 20"
+                        fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                            clip-rule="evenodd" />
                     </svg>
                 </button>
+
+                <div x-show="ccOpen" x-collapse class="pl-3 space-y-1">
+                    <a href="{{ route('identitas.index') }}"
+                        class="flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                  text-[#706f6c] dark:text-[#A1A09A]
+                  hover:bg-black/5 dark:hover:bg-white/5 transition">
+                        <span>🧾</span><span>Identitas</span>
+                    </a>
+
+                    <a href="{{ route('follow-up.index') }}"
+                        class="flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                  text-[#706f6c] dark:text-[#A1A09A]
+                  hover:bg-black/5 dark:hover:bg-white/5 transition">
+                        <span>📌</span><span>Follow Up</span>
+                    </a>
+
+                    <a href="{{ route('survei.index') }}"
+                        class="flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                  text-[#706f6c] dark:text-[#A1A09A]
+                  hover:bg-black/5 dark:hover:bg-white/5 transition">
+                        <span>🗓️</span><span>Survei</span>
+                    </a>
+
+                    <a href="{{ route('prediksi.index') }}"
+                        class="flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                  text-[#706f6c] dark:text-[#A1A09A]
+                  hover:bg-black/5 dark:hover:bg-white/5 transition">
+                        <span>📊</span><span>Hasil Prediksi</span>
+                    </a>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600"
-             x-data="{ theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light' }">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <button type="button"
-                    class="block w-full text-left px-4 py-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                    @click="
-                        if (theme === 'dark') {
-                            document.documentElement.classList.remove('dark');
-                            localStorage.setItem('theme', 'light');
-                            theme = 'light';
-                        } else {
-                            document.documentElement.classList.add('dark');
-                            localStorage.setItem('theme', 'dark');
-                            theme = 'dark';
-                        }
-                    "
-                >
-                    <span x-show="theme === 'light'">🌙 Dark Mode</span>
-                    <span x-show="theme === 'dark'">☀ Light Mode</span>
-                </button>
-
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <form method="POST" action="{{ route('logout') }}">
+            {{-- Logout --}}
+            <div class="h-16 px-4 border-t border-[#e3e3e0] dark:border-[#3E3E3A] flex items-center">
+                <form method="POST" action="{{ route('logout') }}" class="w-full" x-ref="logoutFormDesktop">
                     @csrf
-                    <x-responsive-nav-link :href="route('logout')"
-                        onclick="event.preventDefault(); this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
+                    <button
+                        type="button"
+                        @click="logoutOpen = true"
+                        class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm
+                   text-[#706f6c] dark:text-[#A1A09A]
+                   border border-[#19140035] dark:border-[#3E3E3A]
+                   hover:bg-black/5 dark:hover:bg-white/5
+                   transition">
+                        Logout
+                    </button>
                 </form>
             </div>
         </div>
+    </aside>
+
+    {{-- Mobile Drawer Sidebar --}}
+    <div x-show="open" x-cloak class="lg:hidden">
+        <div class="fixed inset-0 bg-black/40" @click="open = false"></div>
+
+        <div
+            class="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white dark:bg-[#161615]
+                    border-r border-[#e3e3e0] dark:border-[#3E3E3A] shadow-xl p-4">
+            <div class="flex items-center justify-between">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2">
+                    <div
+                        class="h-9 w-9 rounded-xl bg-[#fff2f2] dark:bg-[#1D0002] flex items-center justify-center border border-[#19140035] dark:border-[#3E3E3A]">
+                        <span class="text-[#F53003] dark:text-[#F61500] font-semibold text-sm">SPK</span>
+                    </div>
+                    <span class="font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">SPK-PR</span>
+                </a>
+
+                <button @click="open = false"
+                    class="p-2 rounded-md text-[#706f6c] dark:text-[#A1A09A] hover:bg-black/5 dark:hover:bg-white/5 transition"
+                    aria-label="Close menu">✕</button>
+            </div>
+
+            <div class="mt-4 space-y-1">
+                <a href="{{ route('dashboard') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-[#706f6c] dark:text-[#A1A09A]
+                          hover:bg-black/5 dark:hover:bg-white/5 transition">
+                    🏠 <span>Home</span>
+                </a>
+
+                {{-- Dropdown: Calon Konsumen (Mobile) --}}
+                <div x-data="{ ccOpen: false }" class="space-y-1">
+                    <button type="button" @click="ccOpen = !ccOpen"
+                        class="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-md text-sm
+               text-[#706f6c] dark:text-[#A1A09A]
+               hover:bg-black/5 dark:hover:bg-white/5 transition">
+                        <span class="flex items-center gap-3">
+                            <span>👥</span>
+                            <span>Calon Konsumen</span>
+                        </span>
+
+                        <span class="text-xs" x-text="ccOpen ? '−' : '+'"></span>
+                    </button>
+
+                    <div x-show="ccOpen" x-collapse class="pl-3 space-y-1">
+                        <a href="{{ route('identitas.index') }}"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                  text-[#706f6c] dark:text-[#A1A09A]
+                  hover:bg-black/5 dark:hover:bg-white/5 transition">
+                            <span>🧾</span><span>Identitas</span>
+                        </a>
+
+                        <a href="{{ route('follow-up.index') }}"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                  text-[#706f6c] dark:text-[#A1A09A]
+                  hover:bg-black/5 dark:hover:bg-white/5 transition">
+                            <span>📌</span><span>Follow Up</span>
+                        </a>
+
+                        <a href="{{ route('survei.index') }}"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                  text-[#706f6c] dark:text-[#A1A09A]
+                  hover:bg-black/5 dark:hover:bg-white/5 transition">
+                            <span>🗓️</span><span>Survei</span>
+                        </a>
+
+                        <a href="{{ route('prediksi.index') }}"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md text-sm
+                  text-[#706f6c] dark:text-[#A1A09A]
+                  hover:bg-black/5 dark:hover:bg-white/5 transition">
+                            <span>📊</span><span>Hasil Prediksi</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="{{ route('profile.edit') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-[#706f6c] dark:text-[#A1A09A]
+                          hover:bg-black/5 dark:hover:bg-white/5 transition">
+                    👤 <span>Profile</span>
+                </a>
+
+                <div class="pt-3 mt-3 border-t border-[#e3e3e0] dark:border-[#3E3E3A]">
+                    <form method="POST" action="{{ route('logout') }}" x-ref="logoutFormMobile">
+                        @csrf
+                        <button
+                            type="button"
+                            @click="logoutOpen = true"
+                            class="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm
+                   text-[#706f6c] dark:text-[#A1A09A]
+                   hover:bg-black/5 dark:hover:bg-white/5
+                   transition">
+                            <span>🚪</span>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
     </div>
+
+    {{-- Logout Confirmation Modal (Desktop + Mobile) --}}
+    <div
+        x-show="logoutOpen"
+        x-cloak
+        @keydown.escape.window="logoutOpen = false"
+        class="fixed inset-0 z-[9999] flex items-center justify-center"
+        aria-labelledby="logout-modal-title"
+        role="dialog"
+        aria-modal="true"
+    >
+        <div class="absolute inset-0 bg-black/50" @click="logoutOpen = false"></div>
+
+        <div
+            x-transition
+            class="relative w-[92%] max-w-md rounded-xl bg-white dark:bg-[#161615]
+                   border border-[#e3e3e0] dark:border-[#3E3E3A] shadow-xl p-5"
+        >
+            <div class="flex items-start justify-between gap-3">
+                <div>
+                    <h2 id="logout-modal-title" class="text-base font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">
+                        Konfirmasi Logout
+                    </h2>
+                    <p class="mt-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                        Kamu yakin mau keluar dari aplikasi?
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    @click="logoutOpen = false"
+                    class="p-2 rounded-md text-[#706f6c] dark:text-[#A1A09A] hover:bg-black/5 dark:hover:bg-white/5 transition"
+                    aria-label="Close"
+                >✕</button>
+            </div>
+
+            <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                    type="button"
+                    @click="logoutOpen = false"
+                    class="px-4 py-2 rounded-md text-sm
+                           text-[#706f6c] dark:text-[#A1A09A]
+                           border border-[#19140035] dark:border-[#3E3E3A]
+                           hover:bg-black/5 dark:hover:bg-white/5 transition"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="button"
+                    @click="
+                        logoutOpen = false;
+                        // submit form yang tersedia (desktop atau mobile)
+                        if ($refs.logoutFormDesktop) { $refs.logoutFormDesktop.submit(); }
+                        else if ($refs.logoutFormMobile) { $refs.logoutFormMobile.submit(); }
+                    "
+                    class="px-4 py-2 rounded-md text-sm
+                           bg-[#F53003] text-white hover:opacity-90 transition"
+                >
+                    Ya, Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
 </nav>

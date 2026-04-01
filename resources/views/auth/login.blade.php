@@ -1,35 +1,13 @@
 <x-guest-layout>
-    <div class="w-full max-w-md mx-auto relative">
 
-        <!-- Top Action (Home + Dark Mode) -->
-        <div class="flex items-center justify-between mb-6">
-            <!-- Kembali ke Home -->
-            <a href="{{ url('/') }}"
-               class="text-sm text-[#706f6c] dark:text-[#A1A09A] hover:text-[#F53003] dark:hover:text-[#FF4433] underline underline-offset-4">
-                ← Kembali ke Home
-            </a>
+    <x-slot name="title">
+        Masuk
+    </x-slot>
 
-            <!-- Toggle Dark Mode -->
-            <button type="button"
-                class="inline-flex items-center justify-center px-3 py-1.5 border border-[#19140035] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm"
-                onclick="
-                    const isDark = document.documentElement.classList.contains('dark');
-                    if (isDark) {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('theme','light');
-                    } else {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('theme','dark');
-                    }
-                ">
-                <span class="hidden dark:inline">☀</span>
-                <span class="inline dark:hidden">🌙</span>
-            </button>
-        </div>
-
-        <!-- Header -->
+        {{-- Header --}}
         <div class="mb-6 text-center">
-            <div class="mx-auto h-12 w-12 rounded-2xl bg-[#fff2f2] dark:bg-[#1D0002] flex items-center justify-center border border-[#19140035] dark:border-[#3E3E3A]">
+            <div
+                class="mx-auto h-12 w-12 rounded-2xl bg-[#fff2f2] dark:bg-[#1D0002] flex items-center justify-center border border-[#19140035] dark:border-[#3E3E3A]">
                 <span class="text-[#F53003] dark:text-[#F61500] font-semibold">SPK</span>
             </div>
 
@@ -41,15 +19,15 @@
             </p>
         </div>
 
-        <!-- Session Status -->
+        {{-- Session Status --}}
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
-        <!-- Card -->
+        {{-- Card --}}
         <div class="bg-white dark:bg-[#161615] border border-[#e3e3e0] dark:border-[#3E3E3A] rounded-lg shadow-sm p-6">
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
 
-                <!-- Email -->
+                {{-- Email --}}
                 <div>
                     <x-input-label for="email" :value="__('Email')" />
                     <x-text-input
@@ -66,7 +44,7 @@
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
 
-                <!-- Password -->
+                {{-- Password --}}
                 <div>
                     <x-input-label for="password" :value="__('Password')" />
                     <x-text-input
@@ -81,8 +59,8 @@
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
 
-                <!-- Remember + Forgot -->
-                <div class="flex items-center justify-between">
+                {{-- Remember --}}
+                <div class="flex items-center">
                     <label for="remember_me" class="inline-flex items-center">
                         <input
                             id="remember_me"
@@ -91,29 +69,39 @@
                             class="rounded border-[#e3e3e0] dark:border-[#3E3E3A] text-[#F53003] focus:ring-[#F53003] dark:bg-[#0a0a0a]"
                         >
                         <span class="ms-2 text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                            Remember me
+                            Ingat saya
                         </span>
                     </label>
+                </div>
+
+                {{-- Action Links (Back + Forgot) --}}
+                <div class="flex items-center justify-between text-sm">
+                    <a href="{{ url('/') }}"
+                       class="text-[#706f6c] dark:text-[#A1A09A]
+                              hover:text-[#F53003] dark:hover:text-[#FF4433]
+                              transition underline underline-offset-4">
+                        Kembali
+                    </a>
 
                     @if (Route::has('password.request'))
                         <a href="{{ route('password.request') }}"
-                           class="text-sm text-[#F53003] dark:text-[#FF4433] hover:underline underline-offset-4">
-                            Forgot password?
+                           class="text-[#F53003] dark:text-[#FF4433]
+                                  hover:underline underline-offset-4 transition">
+                            Lupa password?
                         </a>
                     @endif
                 </div>
 
-                <!-- Button -->
+                {{-- Button --}}
                 <x-primary-button
-                    class="w-full justify-center bg-[#1b1b18] hover:bg-black text-white border border-black">
-                    Log in
+                    class="w-full justify-center bg-[#1b1b18] hover:bg-black
+                           text-white border border-black
+                           focus:ring-2 focus:ring-offset-2 focus:ring-black
+                           dark:focus:ring-offset-[#161615]
+                           transition">
+                    Masuk
                 </x-primary-button>
             </form>
         </div>
-
-        <!-- Footer -->
-        <p class="mt-6 text-center text-xs text-[#706f6c] dark:text-[#A1A09A]">
-            © {{ date('Y') }} SPK-PR
-        </p>
     </div>
 </x-guest-layout>
