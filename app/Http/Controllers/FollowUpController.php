@@ -124,7 +124,7 @@ class FollowUpController extends Controller
         return redirect()
             ->route('follow-up.index')
             ->with('success', 'Follow up berhasil diperbarui.');
-    }composer r
+    }
 
     /**
      * Remove the specified resource from storage.
